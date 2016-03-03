@@ -1,18 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ch.heigvd.res.io.util;
 
 import ch.heigvd.res.io.BufferedIOBenchmark.IOStrategy;
 
 /**
- *
+ * 
  * @author Fabien Franchini
  */
-public class Metric {
-
+public class Metric { 
+    
+    private String operation;
+    private IOStrategy strategy;
+    private int blockSize;
+    private int fileSize;
+    private int duration;
+    
     public Metric(String operation, IOStrategy strategy, int blockSize, int fileSize, int duration) {
         this.operation = operation;
         this.strategy = strategy;
@@ -61,10 +62,5 @@ public class Metric {
         this.duration = duration;
     }
     
-    private String operation;
-    private IOStrategy strategy;
-    private int blockSize;
-    private int fileSize;
-    private int duration;
 }
     
