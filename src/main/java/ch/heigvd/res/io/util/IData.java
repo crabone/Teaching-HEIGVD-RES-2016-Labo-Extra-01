@@ -11,4 +11,7 @@ package ch.heigvd.res.io.util;
  */
 public interface IData {
     
+    public String getKeys();
+    public Object getValues();
+    
 }
