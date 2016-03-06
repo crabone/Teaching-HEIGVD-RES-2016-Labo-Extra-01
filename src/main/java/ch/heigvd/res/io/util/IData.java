@@ -5,13 +5,15 @@
  */
 package ch.heigvd.res.io.util;
 
+import java.util.Collection;
+
 /**
  *
  * @author crab_one
  */
 public interface IData {
     
-    public String getKeys();
-    public Object getValues();
+    public Collection<String> getKeys();
+    public Collection<Object> getValues();
     
 }
