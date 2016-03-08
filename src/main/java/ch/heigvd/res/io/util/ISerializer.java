@@ -5,10 +5,14 @@
  */
 package ch.heigvd.res.io.util;
 
+import java.io.Writer;
+
 /**
  *
  * @author crab_one
  */
 public interface ISerializer {
+    
+    public void serialize(IData data, Writer pw);
     
 }
