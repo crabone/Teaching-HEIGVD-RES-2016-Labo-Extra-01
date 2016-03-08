@@ -10,5 +10,9 @@ package ch.heigvd.res.io.util;
  * @author crab_one
  */
 public interface IRecorder {
-    public void record(IData data);    
+    
+    public void init();
+    public void record(IData data); 
+    public void close();
+    
 }
