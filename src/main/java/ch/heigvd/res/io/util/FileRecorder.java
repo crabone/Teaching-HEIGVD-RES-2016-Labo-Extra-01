@@ -15,7 +15,7 @@ public class FileRecorder implements IRecorder {
     
     private String fileName;
     private ISerializer serializer;
-    private FileWriter outputFile;
+    private FileWriter outputFileWriter;
     
     public FileRecorder(String fileName, ISerializer serializer) {
         this.fileName = fileName;
@@ -27,7 +27,7 @@ public class FileRecorder implements IRecorder {
     }
     
     public void record(IData data) {
-        serializer.serialize(data, outputFile);
+        serializer.serialize(data, outputFileWriter);
     }
     
     public void close() {
