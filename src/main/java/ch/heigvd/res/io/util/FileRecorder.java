@@ -19,7 +19,15 @@ public class FileRecorder implements IRecorder {
         this.serializer = serializer;        
     }
     
+    public void init() {
+        // TODO...
+    }
+    
     public void record(IData data) {
+        // TODO...
+    }
+    
+    public void close() {
         // TODO...
     }
 }
