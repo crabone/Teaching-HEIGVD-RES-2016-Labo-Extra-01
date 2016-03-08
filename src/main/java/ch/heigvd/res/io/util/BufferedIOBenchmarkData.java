@@ -7,6 +7,7 @@ package ch.heigvd.res.io.util;
 
 import ch.heigvd.res.io.BufferedIOBenchmark.IOStrategy;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,6 +19,8 @@ public class BufferedIOBenchmarkData implements IData {
     private Map<String, Object> values;
 
     public BufferedIOBenchmarkData(String operation, IOStrategy strategy, int blockSize, long fileSize, long duration) {
+        values = new HashMap<>();
+        
         values.put("operation", operation);
         values.put("strategy", strategy);
         values.put("blockSizeInBytes", blockSize);
