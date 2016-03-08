@@ -17,7 +17,7 @@ public class BufferedIOBenchmarkData implements IData {
     
     private Map<String, Object> values;
 
-    public BufferedIOBenchmarkData(String operation, IOStrategy strategy, int blockSize, int fileSize, int duration) {
+    public BufferedIOBenchmarkData(String operation, IOStrategy strategy, int blockSize, int fileSize, long duration) {
         values.put("operation", operation);
         values.put("strategy", strategy);
         values.put("blockSizeInBytes", blockSize);
