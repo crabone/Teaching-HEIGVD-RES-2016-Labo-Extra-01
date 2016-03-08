@@ -13,6 +13,6 @@ import java.io.Writer;
  */
 public interface ISerializer {
     
-    public void serialize(IData data, Writer pw);
+    public void serialize(IData data, Writer output);
     
 }

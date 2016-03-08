@@ -13,7 +13,7 @@ import java.io.Writer;
  */
 public class CsvSerializer implements ISerializer {
     
-    public void serialize(IData data, Writer pw) {
+    public void serialize(IData data, Writer output) {
         //TODO...
     }
 }
