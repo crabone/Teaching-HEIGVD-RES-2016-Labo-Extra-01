@@ -39,4 +39,8 @@ public class FileRecorder implements IRecorder {
     public void close() throws IOException {
         fileWriter.close();
     }
+    
+    public FileWriter getFileWriter() {
+        return fileWriter;
+    }
 }

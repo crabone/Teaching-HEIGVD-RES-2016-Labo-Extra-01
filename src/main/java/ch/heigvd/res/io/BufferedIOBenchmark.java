@@ -203,14 +203,15 @@ public class BufferedIOBenchmark {
 		System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s %n");
 
                 BufferedIOBenchmark bm = new BufferedIOBenchmark();
-                ISerializer serializer = new CsvSerializer();
-                IRecorder recorder = new FileRecorder("test.csv", serializer);
+                CsvSerializer serializer = new CsvSerializer();
+                FileRecorder recorder = new FileRecorder("test.csv", serializer);
                 IData metric;
                 recorder.init();
 
 		LOG.log(Level.INFO, "");
 		LOG.log(Level.INFO, "*** BENCHMARKING WRITE OPERATIONS (with BufferedStream)", Timer.takeTime());
 		metric = bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 500);
+                serializer.init(metric, recorder.getFileWriter());
                 recorder.record(metric);
 		metric = bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 50);
                 recorder.record(metric);
