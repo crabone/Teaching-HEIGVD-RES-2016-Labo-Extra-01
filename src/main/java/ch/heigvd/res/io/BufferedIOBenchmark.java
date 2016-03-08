@@ -162,7 +162,7 @@ public class BufferedIOBenchmark {
                 elapsedTime = Timer.takeTime();
 		LOG.log(Level.INFO, "  > Done in {0} ms.", elapsedTime);
                 
-                return new BufferedIOBenchmarkData("WRITE", ioStrategy, blockSize, bytesConsumed, elapsedTime);
+                return new BufferedIOBenchmarkData("READ", ioStrategy, blockSize, bytesConsumed, elapsedTime);
 
 	}
 
