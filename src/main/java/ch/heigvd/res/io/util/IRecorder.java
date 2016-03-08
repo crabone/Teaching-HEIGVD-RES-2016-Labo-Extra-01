@@ -5,13 +5,15 @@
  */
 package ch.heigvd.res.io.util;
 
+import java.io.IOException;
+
 /**
  *
  * @author crab_one
  */
 public interface IRecorder {
     
-    public void init();
+    public void init() throws IOException;
     public void record(IData data); 
     public void close();
     
