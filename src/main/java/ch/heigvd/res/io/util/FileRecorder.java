@@ -5,6 +5,8 @@
  */
 package ch.heigvd.res.io.util;
 
+import java.io.FileWriter;
+
 /**
  *
  * @author crab_one
@@ -13,6 +15,7 @@ public class FileRecorder implements IRecorder {
     
     private String fileName;
     private ISerializer serializer;
+    private FileWriter outputFile;
     
     public FileRecorder(String fileName, ISerializer serializer) {
         this.fileName = fileName;
