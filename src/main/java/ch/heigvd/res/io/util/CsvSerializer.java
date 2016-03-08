@@ -5,7 +5,10 @@
  */
 package ch.heigvd.res.io.util;
 
+import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  *
@@ -14,7 +17,19 @@ import java.io.Writer;
 public class CsvSerializer implements ISerializer {
     
     @Override
-    public void serialize(IData data, Writer output) {
-        //TODO...
+    public void serialize(IData data, Writer output) throws IOException {
+        Collection<Object> values = data.getValues();
+        Iterator i = values.iterator();
+        String line = "";
+        
+        while (i.hasNext()) {
+            line += i.next();
+            
+            if (i.hasNext()) {
+                line += ",";
+            }      
+        }
+        
+        output.write(line + "\n");
     }
 }
