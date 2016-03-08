@@ -16,6 +16,22 @@ import java.util.Iterator;
  */
 public class CsvSerializer implements ISerializer {
     
+    public void init(IData data, Writer output) throws IOException {
+        Collection<String> keys = data.getKeys();
+        Iterator i = keys.iterator();
+        String line = "";
+        
+        while (i.hasNext()) {
+            line += i.next();
+            
+            if (i.hasNext()) {
+                line += ",";
+            }      
+        }
+        
+        output.write(line + "\n");
+    }
+    
     @Override
     public void serialize(IData data, Writer output) throws IOException {
         Collection<Object> values = data.getValues();
