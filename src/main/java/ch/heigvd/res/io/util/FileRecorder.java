@@ -36,7 +36,7 @@ public class FileRecorder implements IRecorder {
     }
     
     @Override
-    public void close() {
-        // TODO...
+    public void close() throws IOException {
+        fileWriter.close();
     }
 }

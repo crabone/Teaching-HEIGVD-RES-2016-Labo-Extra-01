@@ -15,6 +15,6 @@ public interface IRecorder {
     
     public void init() throws IOException;
     public void record(IData data); 
-    public void close();
+    public void close() throws IOException;
     
 }
