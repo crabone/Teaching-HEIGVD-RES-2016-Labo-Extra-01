@@ -25,10 +25,12 @@ public class BufferedIOBenchmarkData implements IData {
         values.put("duration", duration);
     }
     
+    @Override
     public Collection<String> getKeys() {
         return values.keySet(); 
     }
     
+    @Override
     public Collection<Object> getValues() {
         return values.values();
     }

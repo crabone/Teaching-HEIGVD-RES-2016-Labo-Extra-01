@@ -24,15 +24,18 @@ public class FileRecorder implements IRecorder {
         this.serializer = serializer;
     }
     
+    @Override
     public void init() throws IOException {
         File outputFile = new File(fileName);
         fileWriter = new FileWriter(outputFile);
     }
     
+    @Override
     public void record(IData data) {
         serializer.serialize(data, fileWriter);
     }
     
+    @Override
     public void close() {
         // TODO...
     }
