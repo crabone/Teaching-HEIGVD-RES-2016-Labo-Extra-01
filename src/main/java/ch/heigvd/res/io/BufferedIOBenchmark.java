@@ -4,8 +4,6 @@ import ch.heigvd.res.io.util.BufferedIOBenchmarkData;
 import ch.heigvd.res.io.util.CsvSerializer;
 import ch.heigvd.res.io.util.FileRecorder;
 import ch.heigvd.res.io.util.IData;
-import ch.heigvd.res.io.util.IRecorder;
-import ch.heigvd.res.io.util.ISerializer;
 import ch.heigvd.res.io.util.Timer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -52,7 +50,8 @@ public class BufferedIOBenchmark {
 	 */
 	private BufferedIOBenchmarkData produceTestData(IOStrategy ioStrategy, long numberOfBytesToWrite, int blockSize) {
 		LOG.log(Level.INFO, "Generating test data ({0}, {1} bytes, block size: {2}...", new Object[]{ioStrategy, numberOfBytesToWrite, blockSize});
-		Timer.start();
+		long elapsedTime;
+                Timer.start();
 
 		OutputStream os = null;
 		try {
@@ -80,9 +79,10 @@ public class BufferedIOBenchmark {
 				LOG.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
-		LOG.log(Level.INFO, "  > Done in {0} ms.", Timer.takeTime());
+                elapsedTime = Timer.takeTime();
+		LOG.log(Level.INFO, "  > Done in {0} ms.", elapsedTime);
                 
-                return new BufferedIOBenchmarkData("READ", ioStrategy, blockSize, numberOfBytesToWrite, Timer.takeTime());
+                return new BufferedIOBenchmarkData("WRITE", ioStrategy, blockSize, numberOfBytesToWrite, elapsedTime);
 	}
 	
 	/**
@@ -129,6 +129,7 @@ public class BufferedIOBenchmark {
 	 */
 	private BufferedIOBenchmarkData consumeTestData(IOStrategy ioStrategy, int blockSize) {
                 int bytesConsumed = 0;
+                long elapsedTime;
 		LOG.log(Level.INFO, "Consuming test data ({0}, block size: {1}...", new Object[]{ioStrategy, blockSize});
 		Timer.start();
 
@@ -158,9 +159,10 @@ public class BufferedIOBenchmark {
 				LOG.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
-		LOG.log(Level.INFO, "  > Done in {0} ms.", Timer.takeTime());
+                elapsedTime = Timer.takeTime();
+		LOG.log(Level.INFO, "  > Done in {0} ms.", elapsedTime);
                 
-                return new BufferedIOBenchmarkData("WRITE", ioStrategy, blockSize, bytesConsumed, Timer.takeTime());
+                return new BufferedIOBenchmarkData("WRITE", ioStrategy, blockSize, bytesConsumed, elapsedTime);
 
 	}
 
@@ -204,7 +206,7 @@ public class BufferedIOBenchmark {
 
                 BufferedIOBenchmark bm = new BufferedIOBenchmark();
                 CsvSerializer serializer = new CsvSerializer();
-                FileRecorder recorder = new FileRecorder("test.csv", serializer);
+                FileRecorder recorder = new FileRecorder("metrics.csv", serializer);
                 IData metric;
                 recorder.init();
 
