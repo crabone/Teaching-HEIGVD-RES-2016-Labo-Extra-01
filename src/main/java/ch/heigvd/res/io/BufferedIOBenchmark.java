@@ -1,5 +1,11 @@
 package ch.heigvd.res.io;
 
+import ch.heigvd.res.io.util.BufferedIOBenchmarkData;
+import ch.heigvd.res.io.util.CsvSerializer;
+import ch.heigvd.res.io.util.FileRecorder;
+import ch.heigvd.res.io.util.IData;
+import ch.heigvd.res.io.util.IRecorder;
+import ch.heigvd.res.io.util.ISerializer;
 import ch.heigvd.res.io.util.Timer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -44,7 +50,7 @@ public class BufferedIOBenchmark {
 	 * FileOutputStream. Depending on the strategy, it wraps a BufferedOutputStream around it, or not. The method
 	 * then delegates the actual production of bytes to another method, passing it the stream.
 	 */
-	private void produceTestData(IOStrategy ioStrategy, long numberOfBytesToWrite, int blockSize) {
+	private BufferedIOBenchmarkData produceTestData(IOStrategy ioStrategy, long numberOfBytesToWrite, int blockSize) {
 		LOG.log(Level.INFO, "Generating test data ({0}, {1} bytes, block size: {2}...", new Object[]{ioStrategy, numberOfBytesToWrite, blockSize});
 		Timer.start();
 
@@ -75,6 +81,8 @@ public class BufferedIOBenchmark {
 			}
 		}
 		LOG.log(Level.INFO, "  > Done in {0} ms.", Timer.takeTime());
+                
+                return new BufferedIOBenchmarkData("READ", ioStrategy, blockSize, numberOfBytesToWrite, Timer.takeTime());
 	}
 	
 	/**
@@ -119,7 +127,8 @@ public class BufferedIOBenchmark {
 	 * FileInputStream. Depending on the strategy, it wraps a BufferedInputStream around it, or not. The method
 	 * then delegates the actual consumption of bytes to another method, passing it the stream.
 	 */
-	private void consumeTestData(IOStrategy ioStrategy, int blockSize) {
+	private BufferedIOBenchmarkData consumeTestData(IOStrategy ioStrategy, int blockSize) {
+                int bytesConsumed = 0;
 		LOG.log(Level.INFO, "Consuming test data ({0}, block size: {1}...", new Object[]{ioStrategy, blockSize});
 		Timer.start();
 
@@ -134,7 +143,7 @@ public class BufferedIOBenchmark {
 			}
 
 			// Now, let's call the method that does the actual work and produces bytes on the stream
-			consumeDataFromStream(is, ioStrategy, blockSize);
+			bytesConsumed = consumeDataFromStream(is, ioStrategy, blockSize);
 
 			// We are done, so we only have to close the input stream
 			is.close();
@@ -150,6 +159,8 @@ public class BufferedIOBenchmark {
 			}
 		}
 		LOG.log(Level.INFO, "  > Done in {0} ms.", Timer.takeTime());
+                
+                return new BufferedIOBenchmarkData("WRITE", ioStrategy, blockSize, bytesConsumed, Timer.takeTime());
 
 	}
 
@@ -158,7 +169,7 @@ public class BufferedIOBenchmark {
 	 * Depending on the strategy, the method either reads bytes one by one OR in chunks (the size of the chunk
 	 * is passed in parameter). The method does not do anything with the read bytes, except counting them.
 	 */ 
-	private void consumeDataFromStream(InputStream is, IOStrategy ioStrategy, int blockSize) throws IOException {
+	private int consumeDataFromStream(InputStream is, IOStrategy ioStrategy, int blockSize) throws IOException {
 		int totalBytes = 0;
 		// If the strategy dictates to write byte by byte, then it's easy to write the loop; but let's just hope that our client has 
 		// given us a buffered output stream, otherwise the performance will be really bad
@@ -180,43 +191,68 @@ public class BufferedIOBenchmark {
 		}
 		
 		LOG.log(Level.INFO, "Number of bytes read: {0}", new Object[]{totalBytes});
+                
+                return totalBytes;
 	}
 
 	/**
 	 * @param args the command line arguments
+         * @throws java.io.IOException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s %n");
 
-		BufferedIOBenchmark bm = new BufferedIOBenchmark();
+                BufferedIOBenchmark bm = new BufferedIOBenchmark();
+                ISerializer serializer = new CsvSerializer();
+                IRecorder recorder = new FileRecorder("test.csv", serializer);
+                IData metric;
+                recorder.init();
 
 		LOG.log(Level.INFO, "");
 		LOG.log(Level.INFO, "*** BENCHMARKING WRITE OPERATIONS (with BufferedStream)", Timer.takeTime());
-		bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 500);
-		bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 50);
-		bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 5);
-		bm.produceTestData(IOStrategy.ByteByByteWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 0);
+		metric = bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 500);
+                recorder.record(metric);
+		metric = bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 50);
+                recorder.record(metric);
+		metric = bm.produceTestData(IOStrategy.BlockByBlockWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 5);
+                recorder.record(metric);
+		metric = bm.produceTestData(IOStrategy.ByteByByteWithBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 0);
+                recorder.record(metric);
 
 		LOG.log(Level.INFO, "");
 		LOG.log(Level.INFO, "*** BENCHMARKING WRITE OPERATIONS (without BufferedStream)", Timer.takeTime());
-		bm.produceTestData(IOStrategy.BlockByBlockWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 500);
-		bm.produceTestData(IOStrategy.BlockByBlockWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 50);
-		bm.produceTestData(IOStrategy.BlockByBlockWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 5);
-		bm.produceTestData(IOStrategy.ByteByByteWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 0);
+		metric = bm.produceTestData(IOStrategy.BlockByBlockWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 500);
+                recorder.record(metric);
+		metric = bm.produceTestData(IOStrategy.BlockByBlockWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 50);
+                recorder.record(metric);
+		metric = bm.produceTestData(IOStrategy.BlockByBlockWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 5);
+                recorder.record(metric);
+		metric = bm.produceTestData(IOStrategy.ByteByByteWithoutBufferedStream, NUMBER_OF_BYTES_TO_WRITE, 0);
+                recorder.record(metric);
 
 		LOG.log(Level.INFO, "");
 		LOG.log(Level.INFO, "*** BENCHMARKING READ OPERATIONS (with BufferedStream)", Timer.takeTime());
-		bm.consumeTestData(IOStrategy.BlockByBlockWithBufferedStream, 500);
-		bm.consumeTestData(IOStrategy.BlockByBlockWithBufferedStream, 50);
-		bm.consumeTestData(IOStrategy.BlockByBlockWithBufferedStream, 5);
-		bm.consumeTestData(IOStrategy.ByteByByteWithBufferedStream, 0);
+		metric = bm.consumeTestData(IOStrategy.BlockByBlockWithBufferedStream, 500);
+                recorder.record(metric);
+		metric = bm.consumeTestData(IOStrategy.BlockByBlockWithBufferedStream, 50);
+                recorder.record(metric);
+		metric = bm.consumeTestData(IOStrategy.BlockByBlockWithBufferedStream, 5);
+                recorder.record(metric);
+		metric = bm.consumeTestData(IOStrategy.ByteByByteWithBufferedStream, 0);
+                recorder.record(metric);
 		
 		LOG.log(Level.INFO, "");
 		LOG.log(Level.INFO, "*** BENCHMARKING READ OPERATIONS (without BufferedStream)", Timer.takeTime());
-		bm.consumeTestData(IOStrategy.BlockByBlockWithoutBufferedStream, 500);
-		bm.consumeTestData(IOStrategy.BlockByBlockWithoutBufferedStream, 50);
-		bm.consumeTestData(IOStrategy.BlockByBlockWithoutBufferedStream, 5);
-		bm.consumeTestData(IOStrategy.ByteByByteWithoutBufferedStream, 0);
+		metric = bm.consumeTestData(IOStrategy.BlockByBlockWithoutBufferedStream, 500);
+                recorder.record(metric);
+		metric = bm.consumeTestData(IOStrategy.BlockByBlockWithoutBufferedStream, 50);
+                recorder.record(metric);
+		metric = bm.consumeTestData(IOStrategy.BlockByBlockWithoutBufferedStream, 5);
+                recorder.record(metric);
+		metric = bm.consumeTestData(IOStrategy.ByteByByteWithoutBufferedStream, 0);
+                recorder.record(metric);
+                
+                recorder.close();
 	}
 
 }
