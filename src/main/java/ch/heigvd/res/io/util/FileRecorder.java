@@ -31,7 +31,7 @@ public class FileRecorder implements IRecorder {
     }
     
     @Override
-    public void record(IData data) {
+    public void record(IData data) throws IOException {
         serializer.serialize(data, fileWriter);
     }
     

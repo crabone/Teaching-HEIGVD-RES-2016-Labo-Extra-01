@@ -14,7 +14,7 @@ import java.io.IOException;
 public interface IRecorder {
     
     public void init() throws IOException;
-    public void record(IData data); 
+    public void record(IData data) throws IOException; 
     public void close() throws IOException;
     
 }

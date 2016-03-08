@@ -5,6 +5,7 @@
  */
 package ch.heigvd.res.io.util;
 
+import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -13,6 +14,6 @@ import java.io.Writer;
  */
 public interface ISerializer {
     
-    public void serialize(IData data, Writer output);
+    public void serialize(IData data, Writer output) throws IOException;
     
 }
