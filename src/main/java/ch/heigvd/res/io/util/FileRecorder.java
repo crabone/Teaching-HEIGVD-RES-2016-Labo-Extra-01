@@ -27,7 +27,7 @@ public class FileRecorder implements IRecorder {
     }
     
     public void record(IData data) {
-        // TODO...
+        serializer.serialize(data, outputFile);
     }
     
     public void close() {
