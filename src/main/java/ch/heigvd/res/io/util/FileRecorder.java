@@ -5,7 +5,9 @@
  */
 package ch.heigvd.res.io.util;
 
+import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  *
@@ -19,11 +21,12 @@ public class FileRecorder implements IRecorder {
     
     public FileRecorder(String fileName, ISerializer serializer) {
         this.fileName = fileName;
-        this.serializer = serializer;        
+        this.serializer = serializer;
     }
     
-    public void init() {
-        // TODO...
+    public void init() throws IOException {
+        File outputFile = new File(fileName);
+        fileWriter = new FileWriter(outputFile);
     }
     
     public void record(IData data) {
